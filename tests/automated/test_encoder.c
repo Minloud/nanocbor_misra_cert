@@ -12,7 +12,7 @@
 static void print_bytestr(const uint8_t *bytes, size_t len)
 {
     printf("\n");
-    for (unsigned int idx = 0; idx < len; idx++) {
+    for (uint_fast16_t idx = 0; idx < len; idx++) {
         printf("%02X", bytes[idx]);
     }
     printf("\n");

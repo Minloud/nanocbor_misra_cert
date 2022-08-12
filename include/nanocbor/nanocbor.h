@@ -95,49 +95,50 @@ extern "C" {
  * @name CBOR Tag values
  * @{
  */
-#define NANOCBOR_TAG_DATE_TIME (0x0) /**< Standard date/time string */
-#define NANOCBOR_TAG_EPOCH (0x1) /**< Epoch-based date/time */
-#define NANOCBOR_TAG_BIGNUMS_P (0x2) /**< Positive bignum */
-#define NANOCBOR_TAG_BIGNUMS_N (0x3) /**< Negative bignum */
-#define NANOCBOR_TAG_DEC_FRAC (0x4) /**< Decimal Fraction */
-#define NANOCBOR_TAG_BIGFLOATS (0x5) /**< Bigfloat */
+#define NANOCBOR_TAG_DATE_TIME (0x0U) /**< Standard date/time string */
+#define NANOCBOR_TAG_EPOCH (0x1U) /**< Epoch-based date/time */
+#define NANOCBOR_TAG_BIGNUMS_P (0x2U) /**< Positive bignum */
+#define NANOCBOR_TAG_BIGNUMS_N (0x3U) /**< Negative bignum */
+#define NANOCBOR_TAG_DEC_FRAC (0x4U) /**< Decimal Fraction */
+#define NANOCBOR_TAG_BIGFLOATS (0x5U) /**< Bigfloat */
 /** @} */
 
 /**
  * @brief NanoCBOR decoder errors
  */
-typedef enum {
-    /**
-     * @brief No error
-     */
-    NANOCBOR_OK = 0,
 
-    /**
-     * @brief Overflow in the getter. This can happen due to retrieving a
-     *        number size larger than the function provides
-     */
-    NANOCBOR_ERR_OVERFLOW = -1,
+/**
+ * @brief No error
+ */
+#define NANOCBOR_OK ((nancbor_result_t)0)
+/**
+ * @brief Overflow in the getter. This can happen due to retrieving a
+ *        number size larger than the function provides
+ */
+#define NANOCBOR_ERR_OVERFLOW ((nancbor_result_t)-1)
 
-    /**
-     * Decoder get function attempts to retrieve the wrong type
-     */
-    NANOCBOR_ERR_INVALID_TYPE = -2,
+/**
+ * Decoder get function attempts to retrieve the wrong type
+ */
+#define NANOCBOR_ERR_INVALID_TYPE ((nancbor_result_t)-2)
 
-    /**
-     * @brief decoder is beyond the end of the buffer
-     */
-    NANOCBOR_ERR_END = -3,
+/**
+ * @brief decoder is beyond the end of the buffer
+ */
+#define NANOCBOR_ERR_END ((nancbor_result_t)-3)
 
-    /**
-     * @brief Decoder hits the recursion limit
-     */
-    NANOCBOR_ERR_RECURSION = -4,
+/**
+ * @brief Decoder hits the recursion limit
+ */
+#define NANOCBOR_ERR_RECURSION ((nancbor_result_t)-4)
 
-    /**
-     * @brief Decoder could not find the requested entry
-     */
-    NANOCBOR_NOT_FOUND = -5,
-} nanocbor_error_t;
+/**
+ * @brief Decoder could not find the requested entry
+ */
+#define NANOCBOR_NOT_FOUND ((nancbor_result_t)-5)
+
+typedef int_fast16_t nancbor_result_t;
+typedef uint64_t nanocbor_size_t;
 
 /**
  * @brief decoder context
@@ -145,7 +146,7 @@ typedef enum {
 typedef struct nanocbor_value {
     const uint8_t *cur; /**< Current position in the buffer             */
     const uint8_t *end; /**< End of the buffer                          */
-    uint64_t remaining; /**< Number of items remaining in the container */
+    nanocbor_size_t remaining; /**< Number of items remaining in the container */
     uint8_t flags; /**< Flags for decoding hints                   */
 } nanocbor_value_t;
 
@@ -201,7 +202,7 @@ void nanocbor_decoder_init(nanocbor_value_t *value, const uint8_t *buf,
  * @return              major type
  * @return              NANOCBOR_ERR_END if the buffer is exhausted
  */
-int nanocbor_get_type(const nanocbor_value_t *value);
+nancbor_result_t nanocbor_get_type(const nanocbor_value_t *value);
 
 /**
  * @brief Check if the current buffer or container is exhausted
@@ -226,7 +227,7 @@ bool nanocbor_at_end(const nanocbor_value_t *it);
  * @return              number of bytes read
  * @return              negative on error
  */
-int nanocbor_get_uint8(nanocbor_value_t *cvalue, uint8_t *value);
+nancbor_result_t nanocbor_get_uint8(nanocbor_value_t *cvalue, uint8_t *value);
 
 /**
  * @brief Retrieve a positive integer as uint16_t from the stream
@@ -241,7 +242,7 @@ int nanocbor_get_uint8(nanocbor_value_t *cvalue, uint8_t *value);
  * @return              number of bytes read
  * @return              negative on error
  */
-int nanocbor_get_uint16(nanocbor_value_t *cvalue, uint16_t *value);
+nancbor_result_t nanocbor_get_uint16(nanocbor_value_t *cvalue, uint16_t *value);
 
 /**
  * @brief Retrieve a positive integer as uint32_t from the stream
@@ -256,7 +257,7 @@ int nanocbor_get_uint16(nanocbor_value_t *cvalue, uint16_t *value);
  * @return              number of bytes read
  * @return              negative on error
  */
-int nanocbor_get_uint32(nanocbor_value_t *cvalue, uint32_t *value);
+nancbor_result_t nanocbor_get_uint32(nanocbor_value_t *cvalue, uint32_t *value);
 
 /**
  * @brief Retrieve a positive integer as uint64_t from the stream
@@ -271,7 +272,7 @@ int nanocbor_get_uint32(nanocbor_value_t *cvalue, uint32_t *value);
  * @return              number of bytes read
  * @return              negative on error
  */
-int nanocbor_get_uint64(nanocbor_value_t *cvalue, uint64_t *value);
+nancbor_result_t nanocbor_get_uint64(nanocbor_value_t *cvalue, uint64_t *value);
 
 /**
  * @brief Retrieve a signed integer as int8_t from the stream
@@ -287,7 +288,7 @@ int nanocbor_get_uint64(nanocbor_value_t *cvalue, uint64_t *value);
  * @return              number of bytes read
  * @return              negative on error
  */
-int nanocbor_get_int8(nanocbor_value_t *cvalue, int8_t *value);
+nancbor_result_t nanocbor_get_int8(nanocbor_value_t *cvalue, int8_t *value);
 
 /**
  * @brief Retrieve a signed integer as int16_t from the stream
@@ -303,7 +304,7 @@ int nanocbor_get_int8(nanocbor_value_t *cvalue, int8_t *value);
  * @return              number of bytes read
  * @return              negative on error
  */
-int nanocbor_get_int16(nanocbor_value_t *cvalue, int16_t *value);
+nancbor_result_t nanocbor_get_int16(nanocbor_value_t *cvalue, int16_t *value);
 
 /**
  * @brief Retrieve a signed integer as int32_t from the stream
@@ -318,7 +319,7 @@ int nanocbor_get_int16(nanocbor_value_t *cvalue, int16_t *value);
  * @return              number of bytes read
  * @return              negative on error
  */
-int nanocbor_get_int32(nanocbor_value_t *cvalue, int32_t *value);
+nancbor_result_t nanocbor_get_int32(nanocbor_value_t *cvalue, int32_t *value);
 
 /**
  * @brief Retrieve a signed integer as int64_t from the stream
@@ -333,7 +334,7 @@ int nanocbor_get_int32(nanocbor_value_t *cvalue, int32_t *value);
  * @return              number of bytes read
  * @return              negative on error
  */
-int nanocbor_get_int64(nanocbor_value_t *cvalue, int64_t *value);
+nancbor_result_t nanocbor_get_int64(nanocbor_value_t *cvalue, int64_t *value);
 
 /**
  * @brief Retrieve a decimal fraction from the stream as a int32_t mantisa and
@@ -350,7 +351,7 @@ int nanocbor_get_int64(nanocbor_value_t *cvalue, int64_t *value);
  * @return              NANOCBOR_OK on success
  * @return              negative on error
  */
-int nanocbor_get_decimal_frac(nanocbor_value_t *cvalue, int32_t *e, int32_t *m);
+nancbor_result_t nanocbor_get_decimal_frac(nanocbor_value_t *cvalue, int32_t *e, int32_t *m);
 
 /**
  * @brief Retrieve a byte string from the stream
@@ -365,7 +366,7 @@ int nanocbor_get_decimal_frac(nanocbor_value_t *cvalue, int32_t *e, int32_t *m);
  * @return              NANOCBOR_OK on success
  * @return              negative on error
  */
-int nanocbor_get_bstr(nanocbor_value_t *cvalue, const uint8_t **buf,
+nancbor_result_t nanocbor_get_bstr(nanocbor_value_t *cvalue, const uint8_t **buf,
                       size_t *len);
 
 /**
@@ -381,7 +382,7 @@ int nanocbor_get_bstr(nanocbor_value_t *cvalue, const uint8_t **buf,
  * @return              NANOCBOR_OK on success
  * @return              negative on error
  */
-int nanocbor_get_tstr(nanocbor_value_t *cvalue, const uint8_t **buf,
+nancbor_result_t nanocbor_get_tstr(nanocbor_value_t *cvalue, const uint8_t **buf,
                       size_t *len);
 
 /**
@@ -398,7 +399,7 @@ int nanocbor_get_tstr(nanocbor_value_t *cvalue, const uint8_t **buf,
  * @return              NANOCBOR_OK if @p key was found
  * @return              negative on error / not found
  */
-int nanocbor_get_key_tstr(nanocbor_value_t *start, const char *key,
+nancbor_result_t nanocbor_get_key_tstr(nanocbor_value_t *start, const char *key,
                           nanocbor_value_t *value);
 
 /**
@@ -410,7 +411,7 @@ int nanocbor_get_key_tstr(nanocbor_value_t *start, const char *key,
  * @return              NANOCBOR_OK on success
  * @return              negative on error
  */
-int nanocbor_enter_array(const nanocbor_value_t *it, nanocbor_value_t *array);
+nancbor_result_t nanocbor_enter_array(const nanocbor_value_t *it, nanocbor_value_t *array);
 
 /**
  * @brief Enter a map type
@@ -421,7 +422,7 @@ int nanocbor_enter_array(const nanocbor_value_t *it, nanocbor_value_t *array);
  * @return              NANOCBOR_OK on success
  * @return              negative on error
  */
-int nanocbor_enter_map(const nanocbor_value_t *it, nanocbor_value_t *map);
+nancbor_result_t nanocbor_enter_map(const nanocbor_value_t *it, nanocbor_value_t *map);
 
 /**
  * @brief leave the container
@@ -446,7 +447,7 @@ void nanocbor_leave_container(nanocbor_value_t *it,
  *
  * @return              NANOCBOR_OK on success
  */
-int nanocbor_get_tag(nanocbor_value_t *cvalue, uint32_t *tag);
+nancbor_result_t nanocbor_get_tag(nanocbor_value_t *cvalue, uint32_t *tag);
 
 /**
  * @brief Retrieve a null value from the stream
@@ -459,7 +460,7 @@ int nanocbor_get_tag(nanocbor_value_t *cvalue, uint32_t *tag);
  * @return              NANOCBOR_OK on success
  * @return              negative on error
  */
-int nanocbor_get_null(nanocbor_value_t *cvalue);
+nancbor_result_t nanocbor_get_null(nanocbor_value_t *cvalue);
 
 /**
  * @brief Retrieve a boolean value from the stream
@@ -470,7 +471,7 @@ int nanocbor_get_null(nanocbor_value_t *cvalue);
  * @return              NANOCBOR_OK on success
  * @return              negative on error
  */
-int nanocbor_get_bool(nanocbor_value_t *cvalue, bool *value);
+nancbor_result_t nanocbor_get_bool(nanocbor_value_t *cvalue, bool *value);
 
 /**
  * @brief Retrieve a simple value of undefined from the stream
@@ -480,7 +481,7 @@ int nanocbor_get_bool(nanocbor_value_t *cvalue, bool *value);
  * @return              NANOCBOR_OK on success
  * @return              negative on error
  */
-int nanocbor_get_undefined(nanocbor_value_t *cvalue);
+nancbor_result_t nanocbor_get_undefined(nanocbor_value_t *cvalue);
 
 /**
  * @brief Retrieve a simple value as integer from the stream
@@ -494,7 +495,7 @@ int nanocbor_get_undefined(nanocbor_value_t *cvalue);
  * @return              NANOCBOR_OK on success
  * @return              negative on error
  */
-int nanocbor_get_simple(nanocbor_value_t *cvalue, uint8_t *value);
+nancbor_result_t nanocbor_get_simple(nanocbor_value_t *cvalue, uint8_t *value);
 
 /**
  * @brief Retrieve a float value from the stream.
@@ -511,7 +512,7 @@ int nanocbor_get_simple(nanocbor_value_t *cvalue, uint8_t *value);
  * @return              number of bytes read on success
  * @return              negative on error
  */
-int nanocbor_get_float(nanocbor_value_t *cvalue, float *value);
+nancbor_result_t nanocbor_get_float(nanocbor_value_t *cvalue, float *value);
 
 /**
  * @brief Retrieve a double-sized floating point value from the stream.
@@ -528,7 +529,7 @@ int nanocbor_get_float(nanocbor_value_t *cvalue, float *value);
  * @return              number of bytes read on success
  * @return              negative on error
  */
-int nanocbor_get_double(nanocbor_value_t *cvalue, double *value);
+nancbor_result_t nanocbor_get_double(nanocbor_value_t *cvalue, double *value);
 
 /**
  * @brief Skip to the next value in the CBOR stream
@@ -543,7 +544,7 @@ int nanocbor_get_double(nanocbor_value_t *cvalue, double *value);
  * @return              NANOCBOR_OK on success
  * @return              negative on error
  */
-int nanocbor_skip(nanocbor_value_t *it);
+nancbor_result_t nanocbor_skip(nanocbor_value_t *it);
 
 /**
  * @brief Skip a single simple value in the CBOR stream
@@ -556,7 +557,7 @@ int nanocbor_skip(nanocbor_value_t *it);
  * @return              NANOCBOR_OK on success
  * @return              negative on error
  */
-int nanocbor_skip_simple(nanocbor_value_t *it);
+nancbor_result_t nanocbor_skip_simple(nanocbor_value_t *it);
 
 /**
  * @brief Retrieve part of the CBOR stream for separate parsing
@@ -571,7 +572,7 @@ int nanocbor_skip_simple(nanocbor_value_t *it);
  * @return              NANOCBOR_OK on success
  * @return              negative on error
  */
-int nanocbor_get_subcbor(nanocbor_value_t *it, const uint8_t **start,
+nancbor_result_t nanocbor_get_subcbor(nanocbor_value_t *it, const uint8_t **start,
                          size_t *len);
 
 /**
@@ -585,7 +586,7 @@ int nanocbor_get_subcbor(nanocbor_value_t *it, const uint8_t **start,
  *
  * @return              number of items remaining
  */
-static inline uint32_t
+static inline nanocbor_size_t
 nanocbor_container_remaining(const nanocbor_value_t *value)
 {
     return value->remaining;
@@ -610,7 +611,7 @@ nanocbor_container_indefinite(const nanocbor_value_t *container)
 
 static inline bool nanocbor_in_container(const nanocbor_value_t *container)
 {
-    return container->flags & (NANOCBOR_DECODER_FLAG_CONTAINER);
+    return (container->flags & (NANOCBOR_DECODER_FLAG_CONTAINER)) > 0U;
 }
 
 /** @} */
@@ -654,7 +655,7 @@ size_t nanocbor_encoded_len(nanocbor_encoder_t *enc);
  * @return              Number of bytes written
  * @return              Negative on error
  */
-int nanocbor_fmt_bool(nanocbor_encoder_t *enc, bool content);
+nancbor_result_t nanocbor_fmt_bool(nanocbor_encoder_t *enc, bool content);
 
 /**
  * @brief Write an unsigned integer of at most sizeof uint64_t into the buffer
@@ -665,7 +666,7 @@ int nanocbor_fmt_bool(nanocbor_encoder_t *enc, bool content);
  * @return              number of bytes written
  * @return              Negative on error
  */
-int nanocbor_fmt_uint(nanocbor_encoder_t *enc, uint64_t num);
+nancbor_result_t nanocbor_fmt_uint(nanocbor_encoder_t *enc, uint64_t num);
 
 /**
  * @brief Write a CBOR tag of at most sizeof uint64_t into the buffer
@@ -676,7 +677,7 @@ int nanocbor_fmt_uint(nanocbor_encoder_t *enc, uint64_t num);
  * @return              number of bytes written
  * @return              Negative on error
  */
-int nanocbor_fmt_tag(nanocbor_encoder_t *enc, uint64_t num);
+nancbor_result_t nanocbor_fmt_tag(nanocbor_encoder_t *enc, uint64_t num);
 
 /**
  * @brief Write a signed integer of at most sizeof int32_t into the buffer
@@ -689,7 +690,7 @@ int nanocbor_fmt_tag(nanocbor_encoder_t *enc, uint64_t num);
  * @return              number of bytes written
  * @return              Negative on error
  */
-int nanocbor_fmt_int(nanocbor_encoder_t *enc, int64_t num);
+nancbor_result_t nanocbor_fmt_int(nanocbor_encoder_t *enc, int64_t num);
 
 /**
  * @brief Write a byte string indicator for a byte string with specific length
@@ -704,7 +705,7 @@ int nanocbor_fmt_int(nanocbor_encoder_t *enc, int64_t num);
  * @return              number of bytes written
  * @return              Negative on error
  */
-int nanocbor_fmt_bstr(nanocbor_encoder_t *enc, size_t len);
+nancbor_result_t nanocbor_fmt_bstr(nanocbor_encoder_t *enc, size_t len);
 
 /**
  * @brief Write a text string indicator for a string with specific length
@@ -719,7 +720,7 @@ int nanocbor_fmt_bstr(nanocbor_encoder_t *enc, size_t len);
  * @return              number of bytes written
  * @return              Negative on error
  */
-int nanocbor_fmt_tstr(nanocbor_encoder_t *enc, size_t len);
+nancbor_result_t nanocbor_fmt_tstr(nanocbor_encoder_t *enc, size_t len);
 
 /**
  * @brief Copy a byte string with indicator into the encoder buffer
@@ -731,7 +732,7 @@ int nanocbor_fmt_tstr(nanocbor_encoder_t *enc, size_t len);
  * @return              NANOCBOR_OK if the string fits
  * @return              Negative on error
  */
-int nanocbor_put_bstr(nanocbor_encoder_t *enc, const uint8_t *str, size_t len);
+nancbor_result_t nanocbor_put_bstr(nanocbor_encoder_t *enc, const uint8_t *str, size_t len);
 
 /**
  * @brief Copy a text string with indicator into the encoder buffer
@@ -742,7 +743,7 @@ int nanocbor_put_bstr(nanocbor_encoder_t *enc, const uint8_t *str, size_t len);
  * @return              NANOCBOR_OK if the string fits
  * @return              Negative on error
  */
-int nanocbor_put_tstr(nanocbor_encoder_t *enc, const char *str);
+nancbor_result_t nanocbor_put_tstr(nanocbor_encoder_t *enc, const char *str);
 
 /**
  * @brief Copy n bytes of a text string with indicator into the encoder buffer
@@ -754,7 +755,7 @@ int nanocbor_put_tstr(nanocbor_encoder_t *enc, const char *str);
  * @return              NANOCBOR_OK if the string fits
  * @return              Negative on error
  */
-int nanocbor_put_tstrn(nanocbor_encoder_t *enc, const char *str, size_t len);
+nancbor_result_t nanocbor_put_tstrn(nanocbor_encoder_t *enc, const char *str, size_t len);
 
 /**
  * @brief Write an array indicator with @p len items
@@ -769,7 +770,7 @@ int nanocbor_put_tstrn(nanocbor_encoder_t *enc, const char *str, size_t len);
  * @return              Number of bytes written
  * @return              Negative on error
  */
-int nanocbor_fmt_array(nanocbor_encoder_t *enc, size_t len);
+nancbor_result_t nanocbor_fmt_array(nanocbor_encoder_t *enc, size_t len);
 
 /**
  * @brief Write a map indicator with @p len pairs
@@ -784,7 +785,7 @@ int nanocbor_fmt_array(nanocbor_encoder_t *enc, size_t len);
  * @return              Number of bytes written
  * @return              Negative on error
  */
-int nanocbor_fmt_map(nanocbor_encoder_t *enc, size_t len);
+nancbor_result_t nanocbor_fmt_map(nanocbor_encoder_t *enc, size_t len);
 
 /**
  * @brief Write an indefinite-length array indicator
@@ -794,7 +795,7 @@ int nanocbor_fmt_map(nanocbor_encoder_t *enc, size_t len);
  * @return              Number of bytes written
  * @return              Negative on error
  */
-int nanocbor_fmt_array_indefinite(nanocbor_encoder_t *enc);
+nancbor_result_t nanocbor_fmt_array_indefinite(nanocbor_encoder_t *enc);
 
 /**
  * @brief Write an indefinite-length map indicator
@@ -804,7 +805,7 @@ int nanocbor_fmt_array_indefinite(nanocbor_encoder_t *enc);
  * @return              Number of bytes written
  * @return              Negative on error
  */
-int nanocbor_fmt_map_indefinite(nanocbor_encoder_t *enc);
+nancbor_result_t nanocbor_fmt_map_indefinite(nanocbor_encoder_t *enc);
 
 /**
  * @brief Write a stop code for indefinite length containers
@@ -814,7 +815,7 @@ int nanocbor_fmt_map_indefinite(nanocbor_encoder_t *enc);
  * @return              Number of bytes written
  * @return              Negative on error
  */
-int nanocbor_fmt_end_indefinite(nanocbor_encoder_t *enc);
+nancbor_result_t nanocbor_fmt_end_indefinite(nanocbor_encoder_t *enc);
 
 /**
  * @brief Write a Null value into the encoder buffer
@@ -824,7 +825,7 @@ int nanocbor_fmt_end_indefinite(nanocbor_encoder_t *enc);
  * @return              NANOCBOR_OK
  * @return              Negative on error
  */
-int nanocbor_fmt_null(nanocbor_encoder_t *enc);
+nancbor_result_t nanocbor_fmt_null(nanocbor_encoder_t *enc);
 
 /**
  * @brief Write a float value into the encoder buffer
@@ -835,7 +836,7 @@ int nanocbor_fmt_null(nanocbor_encoder_t *enc);
  * @return              Number of bytes written
  * @return              Negative on error
  */
-int nanocbor_fmt_float(nanocbor_encoder_t *enc, float num);
+nancbor_result_t nanocbor_fmt_float(nanocbor_encoder_t *enc, float num);
 
 /**
  * @brief Write a double floating point value into the encoder buffer
@@ -846,7 +847,7 @@ int nanocbor_fmt_float(nanocbor_encoder_t *enc, float num);
  * @return              Number of bytes written
  * @return              Negative on error
  */
-int nanocbor_fmt_double(nanocbor_encoder_t *enc, double num);
+nancbor_result_t nanocbor_fmt_double(nanocbor_encoder_t *enc, double num);
 
 /**
  * @brief Write a decimal fraction into the encoder buffer
@@ -857,7 +858,7 @@ int nanocbor_fmt_double(nanocbor_encoder_t *enc, double num);
  *
  * @return              Number of bytes written
  */
-int nanocbor_fmt_decimal_frac(nanocbor_encoder_t *enc, int32_t e, int32_t m);
+nancbor_result_t nanocbor_fmt_decimal_frac(nanocbor_encoder_t *enc, int32_t e, int32_t m);
 
 /** @} */
 
