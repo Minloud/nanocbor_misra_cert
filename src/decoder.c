@@ -633,14 +633,15 @@ nancbor_result_t nanocbor_get_key_tstr(nanocbor_value_t *start, const char *key,
     *value = *start;
 
     while (!nanocbor_at_end(value)) {
-        const uint8_t *s = NULL;
+        const int8_t *s = NULL;
+        
         size_t s_len = 0;
 
         if ((res = nanocbor_get_tstr(value, &s, &s_len)) < 0) {
             break;
         }
-
-        if ((s_len == len) && (0 == strncmp(key, (const char *)s, len))) {
+                
+        if ((s_len == len) && (0 == strncmp(key, s, len))) {
             res = NANOCBOR_OK;
             break;
         }

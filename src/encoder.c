@@ -26,7 +26,7 @@ void nanocbor_encoder_init(nanocbor_encoder_t *enc, uint8_t *buf, size_t len)
 {
     enc->len = 0;
     enc->cur = buf;
-    enc->end = buf + len;
+    enc->end = &buf[len];
 }
 
 size_t nanocbor_encoded_len(nanocbor_encoder_t *enc)
@@ -250,6 +250,8 @@ static bool _single_in_range(uint8_t exp, uint32_t num)
     return false;
 }
 
+#if 0
+
 static nancbor_result_t _fmt_halffloat(nanocbor_encoder_t *enc, uint16_t half)
 {
     nancbor_result_t res = _fits(enc, sizeof(uint16_t) + 1U);
@@ -353,6 +355,8 @@ nancbor_result_t nanocbor_fmt_double(nanocbor_encoder_t *enc, double num)
     return res;
 #endif
 }
+
+#endif /* Disable float double */
 
 nancbor_result_t nanocbor_fmt_decimal_frac(nanocbor_encoder_t *enc, int32_t e, int32_t m)
 {
