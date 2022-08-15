@@ -56,7 +56,7 @@ static inline uint8_t _get_type(const nanocbor_value_t *value)
 
 static nancbor_result_t _value_match_exact(nanocbor_value_t *cvalue, uint8_t val)
 {
-    nancbor_result_t res;
+    nancbor_result_t res = 0;
 
     if (_over_end(cvalue)) {
         res = NANOCBOR_ERR_END;
@@ -94,7 +94,7 @@ bool nanocbor_at_end(const nanocbor_value_t *it)
 
 nancbor_result_t nanocbor_get_type(const nanocbor_value_t *value)
 {
-    uint8_t type;
+    uint8_t type = 0;
     
     if (nanocbor_at_end(value)) {
         return NANOCBOR_ERR_END;
@@ -575,7 +575,7 @@ nancbor_result_t nanocbor_skip_simple(nanocbor_value_t *it)
 
 /* NOLINTNEXTLINE(misc-no-recursion): Recursion is limited by design */
 static nancbor_result_t _skip_limited(nanocbor_value_t *it, uint8_t limit);
-static inline nancbor_result_t _skip_limited_again(nanocbor_value_t *it, uint8_t limit)
+static nancbor_result_t _skip_limited_again(nanocbor_value_t *it, uint8_t limit)
 {
     return _skip_limited(it, limit);
 }
@@ -592,7 +592,7 @@ static nancbor_result_t _skip_limited(nanocbor_value_t *it, uint8_t limit)
     }
     
     uint_fast16_t type = (uint_fast16_t)type_res;
-    nancbor_result_t res;
+    nancbor_result_t res = 0;
 
     if ((type == NANOCBOR_TYPE_BSTR) || (type == NANOCBOR_TYPE_TSTR)) {
         const uint8_t *tmp = NULL;

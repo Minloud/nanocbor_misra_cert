@@ -34,7 +34,7 @@ extern "C" {
  * the reverse operation (ntohll, htobe64 or equivalent)
  */
 #ifndef NANOCBOR_BYTEORDER_HEADER
-#define NANOCBOR_BYTEORDER_HEADER <stdlib.h>
+#define NANOCBOR_BYTEORDER_HEADER <machine/endian.h>
 #endif
 
 /**
