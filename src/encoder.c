@@ -250,7 +250,7 @@ static bool _single_in_range(uint8_t exp, uint32_t num)
     return false;
 }
 
-#if 0
+//#if 0
 
 static nancbor_result_t _fmt_halffloat(nanocbor_encoder_t *enc, uint16_t half)
 {
@@ -356,7 +356,7 @@ nancbor_result_t nanocbor_fmt_double(nanocbor_encoder_t *enc, double num)
 #endif
 }
 
-#endif /* Disable float double */
+//#endif /* Disable float double */
 
 nancbor_result_t nanocbor_fmt_decimal_frac(nanocbor_encoder_t *enc, int32_t e, int32_t m)
 {

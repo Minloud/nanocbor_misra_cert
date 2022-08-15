@@ -404,7 +404,7 @@ nancbor_result_t nanocbor_get_simple(nanocbor_value_t *cvalue, uint8_t *value)
 #define HALF_FLOAT_EXP_POS_DIFF ((uint16_t)(FLOAT_EXP_POS - HALF_EXP_POS))
 #define HALF_EXP_TO_FLOAT (HALF_FLOAT_EXP_DIFF << HALF_EXP_POS)
 
-#if 0
+//#if 0
 
 static nancbor_result_t _decode_half_float(nanocbor_value_t *cvalue, float *value)
 {
@@ -486,7 +486,7 @@ nancbor_result_t nanocbor_get_double(nanocbor_value_t *cvalue, double *value)
     return _decode_double(cvalue, value);
 }
 
-#endif /* Disable float-double */
+//#endif /* Disable float-double */
 
 static nancbor_result_t _enter_container(const nanocbor_value_t *it,
                             nanocbor_value_t *container, uint8_t type)
@@ -633,7 +633,7 @@ nancbor_result_t nanocbor_get_key_tstr(nanocbor_value_t *start, const char *key,
     *value = *start;
 
     while (!nanocbor_at_end(value)) {
-        const int8_t *s = NULL;
+        const uint8_t *s = NULL;
         
         size_t s_len = 0;
 
@@ -641,7 +641,7 @@ nancbor_result_t nanocbor_get_key_tstr(nanocbor_value_t *start, const char *key,
             break;
         }
                 
-        if ((s_len == len) && (0 == strncmp(key, s, len))) {
+        if ((s_len == len) && (0 == strncmp(key, (const char*)s, len))) {
             res = NANOCBOR_OK;
             break;
         }
